@@ -9,7 +9,7 @@
 
 
 
-namespace Metallic::Auth
+namespace Metallic::Authorization
 {
     using JwksKeySet = jwt::jwks<jwt::traits::nlohmann_json>;
 

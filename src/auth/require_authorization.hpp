@@ -12,11 +12,11 @@
 #include <spdlog/spdlog.h>
 
 
-namespace Metallic::Auth
+namespace Metallic::Authorization
 {
 
     inline Handler
-    require_auth(JwksKeySet const& jwks, Handler inner)
+    require_authorization(JwksKeySet const& jwks, Handler inner)
     {
         auto isLoginEnabled = g_config_security.get_optional(APP_SECURITY_LOGIN_ENABLED).value_or("false") == "true";
 

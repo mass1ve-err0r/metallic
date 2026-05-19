@@ -14,7 +14,7 @@ namespace Metallic
     register_routes(App& app)
     {
         app.router().get("/api/health", Controllers::HealthController::get);
-        app.router().get("/api/secured/test",Auth::require_auth(app.jwks(), Controllers::TestSecuredController::get));
+        app.router().get("/api/secured/test",Authorization::require_authorization(app.jwks(), Controllers::TestSecuredController::get));
     }
 
 }

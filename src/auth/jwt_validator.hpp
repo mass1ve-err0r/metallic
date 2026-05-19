@@ -11,7 +11,7 @@
 #include <string_view>
 
 
-namespace Metallic::Auth
+namespace Metallic::Authorization
 {
     // Validates a raw Bearer token string against the provided JWKS.
     // Returns JwtClaims on success, std::nullopt if the token is missing, malformed, or invalid.

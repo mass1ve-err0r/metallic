@@ -19,7 +19,7 @@ namespace Metallic
     {
         Request& request;
         tcp::endpoint remote_endpoint;
-        std::optional<Auth::JwtClaims> claims;
+        std::optional<Authorization::JwtClaims> claims;
 
         [[nodiscard]] BodyView
         body() const noexcept

@@ -19,12 +19,12 @@ namespace Metallic
     }
 
     void
-    App::set_jwks(Auth::JwksKeySet jwks)
+    App::set_jwks(Authorization::JwksKeySet jwks)
     {
         jwks_ = std::move(jwks);
     }
 
-    Auth::JwksKeySet const&
+    Authorization::JwksKeySet const&
     App::jwks() const
     {
         return jwks_;

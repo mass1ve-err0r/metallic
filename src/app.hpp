@@ -15,14 +15,14 @@ namespace Metallic
         Router& router();
         Router const& router() const;
 
-        void set_jwks(Auth::JwksKeySet jwks);
-        Auth::JwksKeySet const& jwks() const;
+        void set_jwks(Authorization::JwksKeySet jwks);
+        Authorization::JwksKeySet const& jwks() const;
 
         asio::awaitable<Response> handle(RequestContext& ctx) const;
 
     private:
         Router router_;
-        Auth::JwksKeySet jwks_;
+        Authorization::JwksKeySet jwks_;
     };
 
 }

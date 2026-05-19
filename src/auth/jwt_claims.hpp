@@ -8,7 +8,7 @@
 #include <string>
 
 
-namespace Metallic::Auth
+namespace Metallic::Authorization
 {
     struct JwtClaims
     {

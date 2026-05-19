@@ -10,7 +10,7 @@
 #include <jwt-cpp/jwt.h>
 
 
-namespace Metallic::Auth
+namespace Metallic::Authorization
 {
     std::optional<JwtClaims>
     validate_token(std::string_view bearer_token, JwksKeySet const& jwks)

@@ -19,7 +19,7 @@
 #include "environment.hpp"
 
 
-static std::optional<Metallic::Auth::JwksKeySet>
+static std::optional<Metallic::Authorization::JwksKeySet>
 setup_web_security()
 {
     auto isLoginEnabled = g_config_security.get_optional(APP_SECURITY_LOGIN_ENABLED).value_or("false") == "true";
@@ -35,7 +35,7 @@ setup_web_security()
     }
 
     spdlog::info("fetching JWKS from {}", kc_issuer.value());
-    auto jwks = Metallic::Auth::fetch_jwks(kc_issuer.value());
+    auto jwks = Metallic::Authorization::fetch_jwks(kc_issuer.value());
     spdlog::info("JWKS loaded successfully");
 
     return jwks;
