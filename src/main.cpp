@@ -2,6 +2,7 @@
 // Created by Saadat Baig on 17.05.26.
 //
 #include "app.hpp"
+#include "auth/jwks_fetcher.hpp"
 #include "http/types.hpp"
 #include "logging/logger.hpp"
 #include "routes.hpp"
@@ -15,20 +16,50 @@
 #include <thread>
 #include <vector>
 
+#include "environment.hpp"
 
-int main(int argc, char* argv[])
+
+static std::optional<Metallic::Auth::JwksKeySet>
+setup_web_security()
+{
+    auto isLoginEnabled = g_config_security.get_optional(APP_SECURITY_LOGIN_ENABLED).value_or("false") == "true";
+    if (!isLoginEnabled)
+    {
+        spdlog::info("Setting up server with PERMISSIVE security handling, use for local development only!");
+        return std::nullopt;
+    }
+
+    auto kc_issuer = g_config_security.get_optional(APP_SECURITY_OAUTH2_ISSUER_URL);
+    if (!kc_issuer) {
+        throw std::runtime_error("APP_KC_ISSUER environment variable not set!");
+    }
+
+    spdlog::info("fetching JWKS from {}", kc_issuer.value());
+    auto jwks = Metallic::Auth::fetch_jwks(kc_issuer.value());
+    spdlog::info("JWKS loaded successfully");
+
+    return jwks;
+}
+
+int
+main(int argc, char* argv[])
 {
     try
     {
         Metallic::Logging::Logger::init();
 
         auto server = std::make_shared<Metallic::App>();
+
+        auto jwks = setup_web_security();
+        if (jwks)
+        {
+            server->set_jwks(std::move(jwks.value()));
+        }
+
         Metallic::register_routes(*server);
 
         auto const address = Metallic::asio::ip::make_address(argc > 1 ? argv[1] : "0.0.0.0");
-
-        auto const port = static_cast<unsigned short>(argc > 2 ? std::atoi(argv[2]) : 8080);
-
+        auto const port = static_cast<unsigned short>(argc > 2 ? std::atoi(argv[2]) : 8090);
         auto const thread_count =
             std::max(1u, argc > 3
                 ? static_cast<unsigned>(std::atoi(argv[3]))

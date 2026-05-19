@@ -3,7 +3,9 @@
 //
 #include "routes.hpp"
 
+#include "auth/require_authorization.hpp"
 #include "controllers/health_controller.hpp"
+#include "controllers/test_secured_controller.hpp"
 
 
 namespace Metallic
@@ -11,7 +13,8 @@ namespace Metallic
     void
     register_routes(App& app)
     {
-        app.router().get("/health", Controllers::HealthController::get);
+        app.router().get("/api/health", Controllers::HealthController::get);
+        app.router().get("/api/secured/test",Auth::require_auth(app.jwks(), Controllers::TestSecuredController::get));
     }
 
 }

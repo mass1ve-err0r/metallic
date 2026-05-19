@@ -5,7 +5,9 @@
 
 #include "body_view.hpp"
 #include "types.hpp"
+#include "../auth/jwt_claims.hpp"
 
+#include <optional>
 #include <span>
 #include <string>
 #include <string_view>
@@ -17,6 +19,7 @@ namespace Metallic
     {
         Request& request;
         tcp::endpoint remote_endpoint;
+        std::optional<Auth::JwtClaims> claims;
 
         [[nodiscard]] BodyView
         body() const noexcept

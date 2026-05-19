@@ -18,6 +18,18 @@ namespace Metallic
         return router_;
     }
 
+    void
+    App::set_jwks(Auth::JwksKeySet jwks)
+    {
+        jwks_ = std::move(jwks);
+    }
+
+    Auth::JwksKeySet const&
+    App::jwks() const
+    {
+        return jwks_;
+    }
+
     asio::awaitable<Response>
     App::handle(RequestContext& ctx) const
     {
