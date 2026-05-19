@@ -39,7 +39,23 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(Boost)
 
-# --- spdlog -----------------------------------------------------------------
+# --- Boost.PFR ---------------------------------------------------------------
+FetchContent_Declare(pfr
+        GIT_REPOSITORY https://github.com/boostorg/pfr.git
+        GIT_TAG        2.2.0
+)
+
+FetchContent_MakeAvailable(pfr)
+
+# --- libpqxx -----------------------------------------------------------------
+FetchContent_Declare(libpqxx
+        GIT_REPOSITORY https://github.com/jtv/libpqxx.git
+        GIT_TAG        8.0.1
+)
+
+FetchContent_MakeAvailable(libpqxx)
+
+# --- spdlog ------------------------------------------------------------------
 set(SPDLOG_BUILD_SHARED OFF CACHE BOOL "" FORCE)
 set(SPDLOG_BUILD_EXAMPLE OFF CACHE BOOL "" FORCE)
 set(SPDLOG_BUILD_EXAMPLE_HO OFF CACHE BOOL "" FORCE)
@@ -96,6 +112,8 @@ target_link_libraries(${APP_NAME} PRIVATE
         spdlog::spdlog
         nlohmann_json::nlohmann_json
         CURL::libcurl
+        Boost::pfr
+        libpqxx::pqxx
 )
 
 target_compile_options(${APP_NAME} PRIVATE

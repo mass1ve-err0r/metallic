@@ -16,3 +16,8 @@ static const EnvironmentConfiguration g_config_server({
     {APP_SERVER_PORT, "APP_PORT", "8090"},
     {APP_SERVER_BODY_LIMIT, "APP_MAX_REQUEST_BYTES", "10485760"}, // 10 MB default
 });
+
+static const EnvironmentConfiguration g_config_db({
+    {APP_DB_URL,       "APP_DB_URL",       ""},
+    {APP_DB_POOL_SIZE, "APP_DB_POOL_SIZE", "8"},
+});

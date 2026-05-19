@@ -15,11 +15,16 @@
 
 namespace Metallic
 {
+    class App; // forward declaration — App owns the session that owns this context
+
     struct RequestContext
     {
         Request& request;
         tcp::endpoint remote_endpoint;
         std::optional<Authorization::JwtClaims> claims;
+        // Raw pointer is safe: App is held alive by shared_ptr in session()
+        // for the entire coroutine lifetime that this RequestContext exists in.
+        App const* app{nullptr};
 
         [[nodiscard]] BodyView
         body() const noexcept

@@ -5,6 +5,9 @@
 
 #include "http/router.hpp"
 #include "auth/jwks_fetcher.hpp"
+#include "db/pool.hpp"
+
+#include <memory>
 
 
 namespace Metallic
@@ -18,11 +21,15 @@ namespace Metallic
         void set_jwks(Authorization::JwksKeySet jwks);
         Authorization::JwksKeySet const& jwks() const;
 
+        void set_db_pool(std::shared_ptr<Persistence::DatabasePool> pool);
+        std::shared_ptr<Persistence::DatabasePool> db_pool() const;
+
         asio::awaitable<Response> handle(RequestContext& ctx) const;
 
     private:
         Router router_;
         Authorization::JwksKeySet jwks_;
+        std::shared_ptr<Persistence::DatabasePool> db_pool_;
     };
 
 }

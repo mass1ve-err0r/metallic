@@ -3,6 +3,7 @@
 //
 #include "app.hpp"
 #include "auth/jwks_fetcher.hpp"
+#include "db/pool.hpp"
 #include "http/types.hpp"
 #include "logging/logger.hpp"
 #include "routes.hpp"
@@ -41,6 +42,24 @@ setup_web_security()
     return jwks;
 }
 
+static std::optional<std::shared_ptr<Metallic::Persistence::DatabasePool>>
+setup_db()
+{
+    auto db_url = g_config_db.get_optional(APP_DB_URL);
+    if (!db_url) {
+        spdlog::info("DB URL environment variable not set, not using any persistnce!");
+        return std::nullopt;
+    }
+
+    auto pool_size = g_config_db.get_as<std::size_t>(APP_DB_POOL_SIZE);
+
+    spdlog::info("connecting to database (pool size: {})", pool_size);
+    auto pool = std::make_shared<Metallic::Persistence::DatabasePool>(db_url.value(), pool_size);
+    spdlog::info("database pool ready");
+
+    return pool;
+}
+
 int
 main(int argc, char* argv[])
 {
@@ -56,10 +75,16 @@ main(int argc, char* argv[])
             server->set_jwks(std::move(jwks.value()));
         }
 
+        auto db = setup_db();
+        if (db)
+        {
+            server->set_db_pool(db.value());
+        }
+
         Metallic::register_routes(*server);
 
         auto const address = Metallic::asio::ip::make_address(argc > 1 ? argv[1] : "0.0.0.0");
-        auto const port = static_cast<unsigned short>(argc > 2 ? std::atoi(argv[2]) : 8090);
+        auto const port = static_cast<unsigned short>(argc > 2 ? std::atoi(argv[2]) : g_config_server.get_as<uint16_t>(APP_SERVER_PORT));
         auto const thread_count =
             std::max(1u, argc > 3
                 ? static_cast<unsigned>(std::atoi(argv[3]))
