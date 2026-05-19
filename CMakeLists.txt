@@ -1,5 +1,12 @@
 cmake_minimum_required(VERSION 4.2)
-project(metallic LANGUAGES CXX)
+
+get_filename_component(
+        APP_NAME
+        ${CMAKE_SOURCE_DIR}
+        NAME
+)
+
+project(${APP_NAME} LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -52,23 +59,23 @@ file(GLOB_RECURSE SRC_FILES CONFIGURE_DEPENDS
         "${CMAKE_CURRENT_SOURCE_DIR}/src/*.*"
 )
 
-add_executable(metallic ${SRC_FILES})
+add_executable(${APP_NAME} ${SRC_FILES})
 
-target_include_directories(metallic PRIVATE
+target_include_directories(${APP_NAME} PRIVATE
         "${CMAKE_CURRENT_SOURCE_DIR}/src"
 )
 
-target_link_libraries(metallic PRIVATE
+target_link_libraries(${APP_NAME} PRIVATE
         Boost::system
         Boost::beast
         Boost::asio
         spdlog::spdlog
 )
 
-target_compile_options(metallic PRIVATE
+target_compile_options(${APP_NAME} PRIVATE
         $<$<CXX_COMPILER_ID:GNU,Clang,AppleClang>:-Wall -Wextra -Wpedantic>
 )
 
 if (UNIX)
-    target_link_libraries(metallic PRIVATE pthread)
+    target_link_libraries(${APP_NAME} PRIVATE pthread)
 endif()
