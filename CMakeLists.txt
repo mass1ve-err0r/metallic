@@ -17,7 +17,14 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # ---------------------------------------------------------------------------
 include(FetchContent)
 
-# --- Boost Beast + Asio -----------------------------------------------------
+
+# --- OpenSSL ---------------------------------------------------------------
+find_package(OpenSSL REQUIRED)
+
+# --- libcurl ----------------------------------------------------------------
+find_package(CURL REQUIRED)
+
+# --- Boost Beast + Asio + SSL ----------------------------------------------
 set(BOOST_ENABLE_CMAKE ON)
 set(BOOST_INCLUDE_LIBRARIES system beast asio)
 
@@ -52,6 +59,20 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(spdlog)
 
+# --- jwt-cpp ----------------------------------------------------------------
+FetchContent_Declare(
+        jwt-cpp
+        GIT_REPOSITORY https://github.com/Thalhammer/jwt-cpp.git
+        GIT_TAG        v0.7.2
+        GIT_SHALLOW    TRUE
+        EXCLUDE_FROM_ALL
+)
+
+FetchContent_MakeAvailable(jwt-cpp)
+
+# --- nlohmann/json ----------------------------------------------------------
+find_package(nlohmann_json REQUIRED)
+
 # ---------------------------------------------------------------------------
 # Executable
 # ---------------------------------------------------------------------------
@@ -69,12 +90,19 @@ target_link_libraries(${APP_NAME} PRIVATE
         Boost::system
         Boost::beast
         Boost::asio
+        OpenSSL::SSL
+        OpenSSL::Crypto
+        jwt-cpp::jwt-cpp
         spdlog::spdlog
+        nlohmann_json::nlohmann_json
+        CURL::libcurl
 )
 
 target_compile_options(${APP_NAME} PRIVATE
         $<$<CXX_COMPILER_ID:GNU,Clang,AppleClang>:-Wall -Wextra -Wpedantic>
 )
+
+target_compile_definitions(${APP_NAME} PRIVATE JWT_DISABLE_PICOJSON)
 
 if (UNIX)
     target_link_libraries(${APP_NAME} PRIVATE pthread)
